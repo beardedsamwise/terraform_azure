@@ -36,7 +36,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "example" {
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   sku                 = "Standard_B2s"
-  instances           = 1
+  instances           = 3
   admin_username      = "adminuser"
 
   user_data = filebase64("apache.sh")
