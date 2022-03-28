@@ -35,7 +35,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "example" {
   name                = "vmss"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  sku                 = "Standard_B2s"
+  sku                 = var.vm-size
   instances           = 3
   admin_username      = "adminuser"
 
@@ -59,15 +59,16 @@ resource "azurerm_linux_virtual_machine_scale_set" "example" {
   }
 
   network_interface {
-    name    = "vmss-nic"
-    primary = true
+    name                      = "vmss-nic"
+    primary                   = true
+    network_security_group_id = azurerm_network_security_group.web.id
 
     ip_configuration {
-      name                                   = "IPConfiguration"
-      subnet_id                              = azurerm_subnet.backend.id
-      #load_balancer_backend_address_pool_ids = [azurerm_application_gateway.network.backend_address_pool[0].id]
-      primary = true
+      name                                         = "IPConfiguration"
+      subnet_id                                    = azurerm_subnet.backend.id
+      application_gateway_backend_address_pool_ids = azurerm_application_gateway.network.backend_address_pool[*].id
+      primary                                      = true
     }
- }
+  }
 
 }

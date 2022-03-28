@@ -1,4 +1,4 @@
-# Create a virtual network within the resource group
+# Create a virtual network and subnets
 resource "azurerm_virtual_network" "main" {
   name                = "tf-az-network"
   resource_group_name = azurerm_resource_group.main.name
@@ -41,3 +41,23 @@ resource "azurerm_public_ip" "bastion" {
   allocation_method   = "Static"
   sku                 = "Standard"
 }
+
+# Create network security group
+resource "azurerm_network_security_group" "web" {
+  name                = "web_nsg"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  security_rule {
+    name                       = "http"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = azurerm_subnet.frontend.address_prefix
+    destination_address_prefix = "*"
+  }
+}
+
